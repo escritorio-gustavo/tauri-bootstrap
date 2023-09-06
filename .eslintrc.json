@@ -1,0 +1,21 @@
+{
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "parserOptions": {
+    "project": ["./tsconfig.json"]
+  },
+  "root": true,
+  "ignorePatterns": "*.config.js",
+  "rules": {
+    "camelcase": "warn",
+    "complexity": ["error", 10],
+    "consistent-return": "warn",
+    "curly": "warn",
+    "dot-notation": "warn",
+    "eqeqeq": "error",
+    "max-depth": "error",
+    "no-alert": "warn",
+    "no-console": "warn"
+  }
+}
