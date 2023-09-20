@@ -1,6 +1,7 @@
 import plugin from 'tailwindcss/plugin'
+
 /** @type {import('tailwindcss').Config} */
-export const content = ['./src/**/*', './node_modules/shelf-ui/*.*']
+export const content = ['./src/**/*', './node_modules/shelf-ui/dist/*.*']
 export const theme = {
   extend: {},
 }
