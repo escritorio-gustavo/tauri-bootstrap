@@ -10,15 +10,15 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.4", features = [] }
+tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "1.4", features = ["shell-open"] }
+tauri = { version = "1", features = ["shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-captcha_oxide = "2.0.2"
-ts-rs = { version = "7.0.0", features = ["serde-compat", "chrono-impl"] }
-sqlx = { version = "0.6.2", features = [
+captcha_oxide = "3"
+ts-rs = { version = "7", features = ["serde-compat", "chrono-impl"] }
+sqlx = { version = "0.7", features = [
   "runtime-tokio-rustls",
   "mysql",
   "chrono",
@@ -26,15 +26,15 @@ sqlx = { version = "0.6.2", features = [
 tauri-plugin-sql = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1", features = [
   "mysql",
 ] }
-thiserror = "1.0.44"
-lazy_static = "1.4.0"
-chrono = { version = "0.4.26", features = ["serde"] }
-itertools = "0.11.0"
-url = "2.4.1"
-futures = "0.3.28"
-async-trait = "0.1.73"
-rand = "0.8.5"
-rust_xlsxwriter = "0.47.0"
+thiserror = "1.0"
+lazy_static = "1.4"
+chrono = { version = "0.4", features = ["serde"] }
+itertools = "0.11"
+url = "2.4"
+futures = "0.3"
+async-trait = "0.1"
+rand = "0.8"
+rust_xlsxwriter = "0.54"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
