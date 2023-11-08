@@ -20,6 +20,6 @@
     "eqeqeq": "error",
     "max-depth": "error",
     "no-alert": "warn",
-    "no-console": "warn"
+    "no-console": ["error", { "allow": ["error"] }]
   }
 }
