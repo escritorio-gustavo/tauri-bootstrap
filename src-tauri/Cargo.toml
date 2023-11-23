@@ -35,6 +35,8 @@ futures = "0.3"
 async-trait = "0.1"
 rand = "0.8"
 rust_xlsxwriter = "0.55"
+exporter_traits = { path = "../../exporter_traits" }
+document_validator = { path = "../../document_validator" }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
