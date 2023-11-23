@@ -29,12 +29,12 @@ tauri-plugin-sql = { git = "https://github.com/tauri-apps/plugins-workspace", br
 thiserror = "1.0"
 lazy_static = "1.4"
 chrono = { version = "0.4", features = ["serde"] }
-itertools = "0.11"
+itertools = "0.12"
 url = "2.4"
 futures = "0.3"
 async-trait = "0.1"
 rand = "0.8"
-rust_xlsxwriter = "0.54"
+rust_xlsxwriter = "0.55"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
