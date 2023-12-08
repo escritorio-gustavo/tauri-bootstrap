@@ -34,7 +34,7 @@ url = "2.4"
 futures = "0.3"
 async-trait = "0.1"
 rand = "0.8"
-rust_xlsxwriter = "0.55"
+rust_xlsxwriter = "0.56"
 exporter_traits = { path = "../../exporter_traits" }
 document_validator = { path = "../../document_validator" }
 

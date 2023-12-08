@@ -7,7 +7,7 @@
     "typescriptreact": "html"
   },
   "editor.codeActionsOnSave": {
-    "source.organizeImports": false
+    "source.organizeImports": "never"
   },
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([\\s\\S]*?)\\},?[\\s]*?\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
