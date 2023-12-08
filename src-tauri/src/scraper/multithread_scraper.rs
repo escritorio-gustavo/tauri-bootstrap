@@ -3,12 +3,12 @@ use std::sync::Arc;
 use tauri::{State, Window};
 
 use super::{chunk_scraper::scrape_chunk, CONCURRENCY_LIMIT};
-use crate::{model::search::Search, BrowserManagerState};
+use crate::BrowserManagerState;
 
 pub async fn multithread_scrape(
     window: Arc<Window>,
     browser_manager_state: State<'_, BrowserManagerState>,
-    tokens: Box<[Arc<Search>]>,
+    tokens: Box<[Arc<str>]>,
 ) {
     let chunk_size = (tokens.len() as f32 / CONCURRENCY_LIMIT as f32).ceil() as usize;
     let mut handles = Vec::with_capacity(chunk_size);

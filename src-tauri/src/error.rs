@@ -50,10 +50,6 @@ pub enum Error {
     #[serde(serialize_with = "serialize_error")]
     Xlsx(#[from] rust_xlsxwriter::XlsxError),
 
-    #[error(transparent)]
-    #[serde(serialize_with = "serialize_error")]
-    CsvParse(#[from] csv::Error),
-
     #[error("Bot detected")]
     BotDetected,
 }

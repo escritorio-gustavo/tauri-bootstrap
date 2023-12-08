@@ -10,18 +10,12 @@ use std::sync::Arc;
 use tauri::{async_runtime::Mutex, Manager, Window};
 
 use super::{browser_factory::create_browser, document_scraper::scrape_document};
-use crate::{
-    browser_manager::BrowserManager,
-    dal::SearchDAO,
-    model::{result::SearchResult, search::Search},
-    prelude::*,
-    DATA_SET,
-};
+use crate::{browser_manager::BrowserManager, prelude::*, DATA_SET};
 
 pub(super) async fn scrape_chunk(
     window: Arc<Window>,
     state: Arc<Mutex<BrowserManager>>,
-    chunk: Vec<Arc<Search>>,
+    chunk: Vec<Arc<str>>,
 ) -> Result<()> {
     let (mut browser, mut handler) = create_browser().await?;
 
@@ -85,26 +79,23 @@ pub(super) async fn scrape_chunk(
 
             match scrape_result {
                 Err(Error::IncorrectCaptcha | Error::BotDetected | Error::Captcha(_)) => continue,
+                Err(Error::Cdp(_)) => break,
                 x => {
-                    let mut w_lock = DATA_SET.write().await;
-                    let search_result = Arc::new(SearchResult {
-                        nb: Arc::clone(&search.nb),
-                        cpf: Arc::clone(&search.cpf),
-                        error: x.as_ref().err().map(|e| {
-                            dbg!(&e);
-                            e.to_string()
-                        }),
-                    });
-                    w_lock.push(Arc::clone(&search_result));
-                    drop(w_lock);
+                    match x {
+                        Ok(x) => {
+                            let mut w_lock = DATA_SET.write().await;
 
-                    window.emit_all("result", search).unwrap();
+                            w_lock.push(Arc::new(x));
+                            drop(w_lock);
 
-                    if let Err(Error::Cdp(_)) = x {
-                        break;
+                            window.emit_all("result", search).unwrap();
+
+                            // Save to DB
+                        }
+                        Err(e) => {
+                            window.emit_all("error", (search, e.to_string())).unwrap();
+                        }
                     }
-
-                    _ = SearchDAO::write(&search_result).await;
 
                     break;
                 }
