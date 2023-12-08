@@ -3,7 +3,6 @@
 
 use browser_manager::BrowserManager;
 use lazy_static::lazy_static;
-use model::result::SearchResult;
 use std::sync::Arc;
 use tauri::{Manager, State, WindowEvent};
 use tokio::sync::{Mutex, RwLock};

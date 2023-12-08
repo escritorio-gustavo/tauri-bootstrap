@@ -37,6 +37,11 @@ rand = "0.8"
 rust_xlsxwriter = "0.56"
 exporter_traits = { path = "../../exporter_traits" }
 document_validator = { path = "../../document_validator" }
+tokio = { version = "1", features = ["full"] }
+chromiumoxide = { git = "https://github.com/mattsse/chromiumoxide", features = [
+  "tokio-runtime",
+  "_fetcher-rusttls-tokio",
+], default-features = false, branch = "main" }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
