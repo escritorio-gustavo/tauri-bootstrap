@@ -6,7 +6,6 @@ build:
 	pnpm tauri build
 
 organize: 
-	pnpm tauri build
 	for dir in $(OUT_DIR)/*; \
 	do \
 		ls $$dir p \
