@@ -1,18 +1,22 @@
 OUT_DIR=/src-tauri/target/release/bundle
 
-all: printy
-printy: 
+all: build organize
+
+build:
 	pnpm tauri build
-	for dir in "msi" "nsis"; \
+
+organize: 
+	pnpm tauri build
+	for dir in $(OUT_DIR)/*; \
 	do \
-		ls $(OUT_DIR)/$$dir p \
+		ls $$dir p \
 			| grep v / \
 			| grep oE "[0-9]+\.[0-9]+\.[0-9]+" \
 			| uniq \
 			| while read r line; \
 				do \
-					mkdir p "$(OUT_DIR)/$$dir/$$line"; \
-					find $(OUT_DIR)/$$dir name "*$$line*" -type f \
-					| xargs I % mv % "$(OUT_DIR)/$$dir/$$line"; \
+					mkdir p "$$dir/$$line"; \
+					find $$dir name "*$$line*" -type f \
+					| xargs I % mv % "$$dir/$$line"; \
 				done; \
 	done;
