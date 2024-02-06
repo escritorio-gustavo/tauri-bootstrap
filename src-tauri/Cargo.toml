@@ -13,10 +13,10 @@ edition = "2021"
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = ["shell-open"] }
+tauri = { version = "1", features = ["dialog-all", "shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-captcha_oxide = "3"
+captcha_oxide = "5"
 ts-rs = { version = "7", features = ["serde-compat", "chrono-impl"] }
 sqlx = { version = "0.7", features = [
   "runtime-tokio-rustls",
@@ -34,7 +34,7 @@ url = "2.4"
 futures = "0.3"
 async-trait = "0.1"
 rand = "0.8"
-rust_xlsxwriter = "0.56"
+rust_xlsxwriter = "0.62"
 exporter_traits = { path = "../../exporter_traits" }
 document_validator = { path = "../../document_validator" }
 tokio = { version = "1", features = ["full"] }
