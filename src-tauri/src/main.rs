@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use browser_manager::BrowserManager;
+use browser_manager::BrowserManagerState;
 use lazy_static::lazy_static;
 use std::sync::Arc;
 use tauri::{Manager, State, WindowEvent};
@@ -23,10 +23,8 @@ pub struct BrowserManagerState {
 }
 
 fn main() {
-    let browser_manager = BrowserManager::new();
-    let browser_manager_state = BrowserManagerState {
-        browser_manager_mutex: Arc::new(Mutex::new(browser_manager)),
-    };
+    let browser_manager_state = BrowserManagerState::new();
+
 
     tauri::Builder::default()
         .manage(browser_manager_state)

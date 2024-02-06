@@ -1,13 +1,26 @@
-use std::{os::windows::process::CommandExt, process::Command};
+use tokio::sync::Mutex;
+use std::{sync::Arc, os::windows::process::CommandExt, process::Command};
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
+
+pub struct BrowserManagerState {
+    browser_manager_mutex: Arc<Mutex<BrowserManager>>,
+}
+
+impl BrowserManagerState {
+    pub fn new() -> Self {
+        Self {
+            browser_manager_mutex: Arc::new(Mutex::new(BrowserManager::new()))
+        }
+    }
+}
 
 pub struct BrowserManager {
     processes: Vec<u32>,
 }
 
 impl BrowserManager {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             processes: Vec::new(),
         }
