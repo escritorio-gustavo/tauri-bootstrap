@@ -6,9 +6,6 @@
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
-  "parserOptions": {
-    "project": ["./tsconfig.json"]
-  },
   "root": true,
   "ignorePatterns": "*.config.js",
   "rules": {
@@ -20,6 +17,7 @@
     "eqeqeq": "error",
     "max-depth": "error",
     "no-alert": "warn",
-    "no-console": ["error", { "allow": ["error"] }]
+    "no-console": ["error", { "allow": ["error"] }],
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }
