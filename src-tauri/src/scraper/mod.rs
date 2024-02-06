@@ -6,6 +6,7 @@ use url::Url;
 mod browser_factory;
 mod chunk_scraper;
 mod document_scraper;
+mod intercept;
 mod multithread_scraper;
 
 #[cfg(dev)]
