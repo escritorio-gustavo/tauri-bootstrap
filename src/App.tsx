@@ -11,7 +11,7 @@ function App() {
   return (
     <div class="grid h-screen w-screen grid-cols-[minmax(40ch,_1fr)_3fr] gap-2 overflow-hidden">
       <section class="flex h-full flex-col gap-4 overflow-auto bg-neutral-200 p-4 dark:bg-neutral-900">
-        <h1 class="text-xl font-bold">{'{{app_name}}'}</h1>
+        <h1 class="text-xl font-bold">app_name</h1>
 
         <PaginatedList
           class="divider-neutral-600 mb-auto min-h-[10em] flex-grow divide-y-2 overflow-auto rounded bg-neutral-300 p-2 dark:bg-neutral-700"

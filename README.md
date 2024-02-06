@@ -9,7 +9,7 @@ This also includes ESLint, PostCSS, Prettier and some of the Rust crates I use m
 1. Clone the repo by running `git clone git@github.com:escritorio-gustavo/tauri-bootstrap.git`
 1. Run `mv tauri-bootstrap <NEW_NAME>` to rename the directory
 1. Open the project directory in your editor of choice (in VS Code's case, run `code <NEW_NAME>`)
-1. Replace all instances of `{{app_name}}` by the name of your project. They will be in the files:
+1. Replace all instances of `app_name` by the name of your project. They will be in the files:
    - `package.json`
    - `src-tauri/Cargo.toml`
    - `src-tauri/Cargo.lock`
