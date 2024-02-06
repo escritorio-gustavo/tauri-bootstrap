@@ -1,16 +1,20 @@
-use std::{path::PathBuf, str::FromStr};
-
 use lazy_static::lazy_static;
 
 #[derive(Debug)]
-pub struct Config {}
+pub struct Config {
+    pub url: Box<str>,
+}
 
 #[derive(serde::Deserialize)]
-pub struct TempConfig<'a> {}
+pub struct TempConfig<'a> {
+    url: &'a str
+}
 
 impl<'a> From<TempConfig<'a>> for Config {
     fn from(value: TempConfig<'a>) -> Self {
-        Self {}
+        Self {
+            url: value.url.into()
+        }
     }
 }
 

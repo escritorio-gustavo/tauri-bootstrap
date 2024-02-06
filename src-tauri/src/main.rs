@@ -3,9 +3,9 @@
 
 use browser_manager::BrowserManagerState;
 use lazy_static::lazy_static;
-use std::sync::Arc;
+use std::{path::PathBuf, sync::Arc};
 use tauri::{Manager, State, WindowEvent};
-use tokio::sync::{Mutex, RwLock};
+use tokio::sync::{RwLock, OnceCell};
 
 pub mod browser_manager;
 pub mod commands;
@@ -25,7 +25,7 @@ lazy_static! {
 }
 
 #[tokio::main]
-fn main() {
+async fn main() {
     let browser_manager_state = BrowserManagerState::new();
 
     download_browser().await;

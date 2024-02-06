@@ -4,7 +4,7 @@ use std::{sync::Arc, os::windows::process::CommandExt, process::Command};
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 
 pub struct BrowserManagerState {
-    browser_manager_mutex: Arc<Mutex<BrowserManager>>,
+    pub browser_manager_mutex: Arc<Mutex<BrowserManager>>,
 }
 
 impl BrowserManagerState {
