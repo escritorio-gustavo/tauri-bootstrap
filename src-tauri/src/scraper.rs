@@ -8,6 +8,7 @@ mod chunk_scraper;
 mod document_scraper;
 mod intercept;
 mod multithread_scraper;
+mod spawn_waiter;
 
 #[cfg(dev)]
 pub(super) const CONCURRENCY_LIMIT: usize = 1;
