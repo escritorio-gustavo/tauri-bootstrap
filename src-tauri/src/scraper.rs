@@ -17,7 +17,7 @@ pub(super) const CONCURRENCY_LIMIT: usize = 1;
 pub(super) const CONCURRENCY_LIMIT: usize = 15;
 
 lazy_static! {
-    pub(super) static ref URL: Url = Url::from_str(&CONFIG.url).unwrap();
+    pub(super) static ref URL: Url = Url::from_str(&CONFIG.url).expect("URL must be valid");
 }
 
 pub use multithread_scraper::multithread_scrape as scrape;

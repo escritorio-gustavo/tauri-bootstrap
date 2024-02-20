@@ -52,4 +52,3 @@ macro_rules! intercept {
 }
 
 pub(super) use intercept;
-

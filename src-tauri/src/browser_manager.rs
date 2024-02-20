@@ -1,17 +1,24 @@
+use std::{os::windows::process::CommandExt, process::Command, sync::Arc};
 use tokio::sync::Mutex;
-use std::{sync::Arc, os::windows::process::CommandExt, process::Command};
 
-const CREATE_NO_WINDOW: u32 = 0x08000000;
+const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
 pub struct BrowserManagerState {
     pub browser_manager_mutex: Arc<Mutex<BrowserManager>>,
 }
 
 impl BrowserManagerState {
+    #[must_use]
     pub fn new() -> Self {
         Self {
-            browser_manager_mutex: Arc::new(Mutex::new(BrowserManager::new()))
+            browser_manager_mutex: Arc::new(Mutex::new(BrowserManager::new())),
         }
+    }
+}
+
+impl Default for BrowserManagerState {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -20,6 +27,7 @@ pub struct BrowserManager {
 }
 
 impl BrowserManager {
+    #[must_use]
     pub const fn new() -> Self {
         Self {
             processes: Vec::new(),
@@ -39,7 +47,7 @@ impl BrowserManager {
     }
 
     pub fn clear(&mut self) {
-        for pid in self.processes.iter() {
+        for pid in &self.processes {
             let mut kill = Command::new("taskkill.exe");
 
             let pid = *pid;
@@ -52,13 +60,13 @@ impl BrowserManager {
         }
 
         self.processes.clear();
-        _ = BrowserManager::clear_dir();
+        _ = Self::clear_dir();
     }
 
     fn clear_dir() -> std::io::Result<()> {
         let dir = std::fs::read_dir(r".\download")?;
 
-        for entry in dir.filter_map(|x| x.ok()) {
+        for entry in dir.filter_map(Result::ok) {
             let metadata = entry.metadata()?;
 
             if !metadata.is_dir() {
@@ -66,7 +74,7 @@ impl BrowserManager {
             }
 
             let name = entry.file_name();
-            let name = name.to_str().unwrap();
+            let name = name.to_str().expect("Entry name must be a valid string");
             let path = entry.path();
 
             if name.starts_with("data-dir-") {

@@ -27,7 +27,12 @@ pub(super) async fn scrape_chunk(
         }
     });
 
-    let pid = browser.get_mut_child().unwrap().inner.id().unwrap();
+    let pid = browser
+        .get_mut_child()
+        .expect("Process must exist")
+        .inner
+        .id()
+        .expect("Process must have an id");
 
     browser_spawned(&state, pid).await;
 
@@ -88,12 +93,12 @@ pub(super) async fn scrape_chunk(
                             w_lock.push(Arc::new(x));
                             drop(w_lock);
 
-                            window.emit_all("result", search).unwrap();
+                            _ = window.emit_all("result", search);
 
                             // Save to DB
                         }
                         Err(e) => {
-                            window.emit_all("error", (search, e.to_string())).unwrap();
+                            _ = window.emit_all("error", (search, e.to_string()));
                         }
                     }
 

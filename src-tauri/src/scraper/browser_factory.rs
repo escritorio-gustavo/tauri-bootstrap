@@ -6,7 +6,11 @@ use crate::{prelude::*, BROWSER_PATH, EXECUTABLE_PATH};
 pub(super) async fn create_browser() -> Result<(Browser, Handler)> {
     let number = rand::thread_rng().next_u64();
     let config_builder = BrowserConfig::builder()
-        .chrome_executable(EXECUTABLE_PATH.get().unwrap())
+        .chrome_executable(
+            EXECUTABLE_PATH
+                .get()
+                .expect("Chromium executable must exist"),
+        )
         .launch_timeout(std::time::Duration::from_secs(20))
         .no_sandbox()
         .request_timeout(std::time::Duration::from_secs(3_600))

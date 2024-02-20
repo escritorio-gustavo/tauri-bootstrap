@@ -1,11 +1,19 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#![forbid(unsafe_code)]
+#![deny(clippy::enum_glob_use)]
+#![deny(clippy::pedantic)]
+#![deny(clippy::nursery)]
+#![deny(clippy::unwrap_used)]
+#![allow(clippy::missing_errors_doc)]
+#![allow(clippy::missing_panics_doc)]
+#![allow(clippy::module_name_repetitions)]
 
 use browser_manager::BrowserManagerState;
 use lazy_static::lazy_static;
 use std::{path::PathBuf, sync::Arc};
-use tauri::{Manager, State, WindowEvent};
-use tokio::sync::{RwLock, OnceCell};
+use tauri::{async_runtime::block_on, Manager, State, WindowEvent};
+use tokio::sync::{OnceCell, RwLock};
 
 pub mod browser_manager;
 pub mod commands;
@@ -17,9 +25,10 @@ pub mod scraper;
 pub static EXECUTABLE_PATH: OnceCell<PathBuf> = OnceCell::const_new();
 lazy_static! {
     pub static ref TAURI_CONFIG: tauri::Config =
-        serde_json::from_str(include_str!("../tauri.conf.json")).unwrap();
+        serde_json::from_str(include_str!("../tauri.conf.json"))
+            .expect("tauri.config must be valid json");
     pub static ref BROWSER_PATH: PathBuf = tauri::api::path::app_local_data_dir(&TAURI_CONFIG)
-        .unwrap()
+        .expect("Directory must exist")
         .join("browser");
     pub static ref DATA_SET: RwLock<Vec<Arc<()>>> = RwLock::new(vec![]);
 }
@@ -33,11 +42,11 @@ async fn main() {
     tauri::Builder::default()
         .manage(browser_manager_state)
         .on_window_event(move |event| {
-            if let WindowEvent::Destroyed = event.event() {
-                tauri::async_runtime::block_on(async {
+            if matches!(event.event(), WindowEvent::Destroyed) {
+                block_on(async {
                     let state: State<BrowserManagerState> = event.window().state();
                     state.browser_manager_mutex.lock().await.clear();
-                })
+                });
             }
         })
         .invoke_handler(tauri::generate_handler![])
