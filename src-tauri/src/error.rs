@@ -1,7 +1,18 @@
 use chromiumoxide::{error::CdpError, fetcher::FetcherError};
+use tokio::sync::SetError;
 
 #[derive(thiserror::Error, Debug, serde::Serialize)]
 pub enum Error {
+    #[error("Could not find app's local data directory")]
+    AppLocalDataDir,
+
+    #[error(transparent)]
+    #[serde(serialize_with = "serialize_error")]
+    OnceCellSetError(#[from] SetError<std::path::PathBuf>),
+
+    #[error("EXECUTABLE_PATH has not been set")]
+    ExecutablePathNotSet,
+
     #[error(transparent)]
     #[serde(serialize_with = "serialize_error")]
     BrowserFetcher(#[from] FetcherError),

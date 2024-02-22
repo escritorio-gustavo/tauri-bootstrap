@@ -1,6 +1,8 @@
 use std::{os::windows::process::CommandExt, process::Command, sync::Arc};
 use tokio::sync::Mutex;
 
+use crate::{prelude::Error, EXECUTABLE_PATH};
+
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
 pub struct BrowserManagerState {
@@ -63,8 +65,14 @@ impl BrowserManager {
         _ = Self::clear_dir();
     }
 
-    fn clear_dir() -> std::io::Result<()> {
-        let dir = std::fs::read_dir(r".\download")?;
+    fn clear_dir() -> crate::prelude::Result<()> {
+        let dir = std::fs::read_dir(
+            EXECUTABLE_PATH
+                .get()
+                .ok_or(Error::ExecutablePathNotSet)?
+                .parent()
+                .expect("Chromium executable must have a parent")
+        )?;
 
         for entry in dir.filter_map(Result::ok) {
             let metadata = entry.metadata()?;

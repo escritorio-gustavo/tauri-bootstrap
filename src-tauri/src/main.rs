@@ -11,7 +11,7 @@
 
 use browser_manager::BrowserManagerState;
 use lazy_static::lazy_static;
-use std::{path::PathBuf, sync::Arc};
+use std::{path::{Path, PathBuf}, sync::Arc};
 use tauri::{async_runtime::block_on, Manager, State, WindowEvent};
 use tokio::sync::{OnceCell, RwLock};
 
@@ -23,13 +23,8 @@ pub mod prelude;
 pub mod scraper;
 
 pub static EXECUTABLE_PATH: OnceCell<PathBuf> = OnceCell::const_new();
+
 lazy_static! {
-    pub static ref TAURI_CONFIG: tauri::Config =
-        serde_json::from_str(include_str!("../tauri.conf.json"))
-            .expect("tauri.config must be valid json");
-    pub static ref BROWSER_PATH: PathBuf = tauri::api::path::app_local_data_dir(&TAURI_CONFIG)
-        .expect("Directory must exist")
-        .join("browser");
     pub static ref DATA_SET: RwLock<Vec<Arc<()>>> = RwLock::new(vec![]);
 }
 
@@ -37,9 +32,20 @@ lazy_static! {
 async fn main() {
     let browser_manager_state = BrowserManagerState::new();
 
-    download_browser().await;
-
     tauri::Builder::default()
+        .setup(|app| {
+            block_on(async move {
+                let dir = app
+                    .handle()
+                    .path_resolver()
+                    .app_local_data_dir()
+                    .ok_or(prelude::Error::AppLocalDataDir)?;
+                let browser_path = dir.join("browser");
+
+                download_browser(&browser_path).await
+            }).expect("Failed to setup browser");
+            Ok(())
+        })
         .manage(browser_manager_state)
         .on_window_event(move |event| {
             if matches!(event.event(), WindowEvent::Destroyed) {
@@ -54,22 +60,16 @@ async fn main() {
         .expect("error while running tauri application");
 }
 
-async fn download_browser() {
-    let _ = std::fs::create_dir_all(BROWSER_PATH.as_path());
+async fn download_browser(browser_path: &Path) -> prelude::Result<()> {
+    let _ = std::fs::create_dir_all(browser_path);
     let fetcher = chromiumoxide::BrowserFetcherOptions::builder()
-        .with_path(BROWSER_PATH.as_path())
+        .with_path(browser_path)
         .build()
-        .map(chromiumoxide::BrowserFetcher::new)
-        .expect("Path must be provided to build BrowserFetcherOptions");
+        .map(chromiumoxide::BrowserFetcher::new)?;
 
-    match fetcher.fetch().await {
-        Ok(info) => {
-            EXECUTABLE_PATH
-                .set(info.executable_path)
-                .expect("This should only happen once");
-        }
-        Err(e) => {
-            eprintln!("Fetcher failed: {e}");
-        }
-    };
+    let info = fetcher.fetch().await?;
+
+    EXECUTABLE_PATH
+        .set(info.executable_path)
+        .map_err(Into::into)
 }
