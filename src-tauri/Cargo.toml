@@ -30,13 +30,12 @@ thiserror = "1.0"
 lazy_static = "1.4"
 chrono = { version = "0.4", features = ["serde"] }
 itertools = "0.12"
-url = "2.4"
+url = "2.5"
 futures = "0.3"
 async-trait = "0.1"
 rand = "0.8"
-rust_xlsxwriter = "0.62"
-exporter_traits = { path = "../../exporter_traits" }
-document_validator = { path = "../../document_validator" }
+rust_xlsxwriter = "0.63"
+document_validator = "0.1"
 tokio = { version = "1", features = ["full"] }
 chromiumoxide = { git = "https://github.com/mattsse/chromiumoxide", features = [
   "tokio-runtime",
