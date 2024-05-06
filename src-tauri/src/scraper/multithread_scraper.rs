@@ -16,10 +16,11 @@ pub async fn multithread_scrape(
     let chunk_size = (tokens.len() as f32 / CONCURRENCY_LIMIT as f32).ceil() as usize;
     let mut handles = Vec::with_capacity(chunk_size);
 
-    let chunks = tokens
+    let collect_vec = tokens
         .chunks(chunk_size)
         .map(<[Arc<str>]>::to_vec)
         .collect_vec();
+    let chunks = collect_vec;
 
     for chunk in chunks {
         let state = Arc::clone(&browser_manager_state.browser_manager_mutex);

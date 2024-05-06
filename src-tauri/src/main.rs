@@ -10,10 +10,20 @@
 #![allow(clippy::module_name_repetitions)]
 
 use browser_manager::BrowserManagerState;
+use chromiumoxide::{BrowserFetcher, BrowserFetcherOptions};
 use lazy_static::lazy_static;
-use std::{path::{Path, PathBuf}, sync::Arc};
-use tauri::{async_runtime::block_on, Manager, State, WindowEvent};
-use tokio::sync::{OnceCell, RwLock};
+use prelude::{Error, Result};
+use std::{
+    path::{Path, PathBuf},
+    sync::Arc,
+};
+use tauri::{
+    async_runtime::block_on, App, Builder, GlobalWindowEvent, Manager, State, WindowEvent,
+};
+use tokio::{
+    sync::{OnceCell, RwLock},
+    task::block_in_place,
+};
 
 pub mod browser_manager;
 pub mod commands;
@@ -32,44 +42,54 @@ lazy_static! {
 async fn main() {
     let browser_manager_state = BrowserManagerState::new();
 
-    tauri::Builder::default()
-        .setup(|app| {
-            block_on(async move {
-                let dir = app
-                    .handle()
-                    .path_resolver()
-                    .app_local_data_dir()
-                    .ok_or(prelude::Error::AppLocalDataDir)?;
-                let browser_path = dir.join("browser");
+    tauri::async_runtime::set(tokio::runtime::Handle::current());
 
-                download_browser(&browser_path).await
-            }).expect("Failed to setup browser");
-            Ok(())
-        })
+    Builder::default()
+        .setup(setup)
         .manage(browser_manager_state)
-        .on_window_event(move |event| {
-            if matches!(event.event(), WindowEvent::Destroyed) {
-                block_on(async {
-                    let state: State<BrowserManagerState> = event.window().state();
-                    state.browser_manager_mutex.lock().await.clear();
-                });
-            }
-        })
+        .on_window_event(|x| teardown(&x))
         .invoke_handler(tauri::generate_handler![])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
-async fn download_browser(browser_path: &Path) -> prelude::Result<()> {
+fn teardown(event: &GlobalWindowEvent) {
+    if matches!(event.event(), WindowEvent::Destroyed) {
+        block_in_place(|| {
+            block_on(async {
+                let state: State<BrowserManagerState> = event.window().state();
+                state.browser_manager_mutex.lock().await.clear();
+            });
+        });
+    }
+}
+
+fn setup(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>> {
+    block_in_place(|| {
+        block_on(async move {
+            let dir = app
+                .handle()
+                .path_resolver()
+                .app_local_data_dir()
+                .ok_or(Error::AppLocalDataDir)?;
+
+            let browser_path = dir.join("browser");
+
+            download_browser(&browser_path).await
+        })
+        .map_err(Into::into)
+    })
+}
+
+async fn download_browser(browser_path: &Path) -> Result<()> {
     let _ = std::fs::create_dir_all(browser_path);
-    let fetcher = chromiumoxide::BrowserFetcherOptions::builder()
+    let path = BrowserFetcherOptions::builder()
         .with_path(browser_path)
         .build()
-        .map(chromiumoxide::BrowserFetcher::new)?;
+        .map(BrowserFetcher::new)?
+        .fetch()
+        .await?
+        .executable_path;
 
-    let info = fetcher.fetch().await?;
-
-    EXECUTABLE_PATH
-        .set(info.executable_path)
-        .map_err(Into::into)
+    EXECUTABLE_PATH.set(path).map_err(Into::into)
 }

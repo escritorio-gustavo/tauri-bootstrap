@@ -1,3 +1,4 @@
+#[macro_export]
 macro_rules! intercept {
     ($page: expr) => {{
         use chromiumoxide::cdp::browser_protocol::{
@@ -50,5 +51,3 @@ macro_rules! intercept {
         })
     }};
 }
-
-pub(super) use intercept;

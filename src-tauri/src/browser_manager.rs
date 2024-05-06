@@ -58,7 +58,7 @@ impl BrowserManager {
             kill.args(["/PID", &pid, "/F", "/T"]);
             kill.creation_flags(CREATE_NO_WINDOW);
 
-            _ = kill.output();
+            _ = kill.spawn();
         }
 
         self.processes.clear();
@@ -71,7 +71,7 @@ impl BrowserManager {
                 .get()
                 .ok_or(Error::ExecutablePathNotSet)?
                 .parent()
-                .expect("Chromium executable must have a parent")
+                .expect("Chromium executable must have a parent"),
         )?;
 
         for entry in dir.filter_map(Result::ok) {
