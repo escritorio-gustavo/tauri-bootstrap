@@ -1,3 +1,5 @@
+import { confirm } from '@tauri-apps/api/dialog'
+import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
 import {
   Button,
   PaginatedList,
@@ -5,9 +7,33 @@ import {
   ProgressBar,
   Table,
 } from 'shelf-ui'
-import { Show } from 'solid-js'
+import { Show, onMount } from 'solid-js'
 
 function App() {
+  onMount(async () => {
+    const { shouldUpdate, manifest } = await checkUpdate()
+
+    if (!shouldUpdate) {
+      return
+    }
+
+    const acceptUpdate = await confirm(
+      `Nova versão disponível: ${manifest?.version}.\n\nDeseja atualizar o aplicativo?`,
+      {
+        cancelLabel: 'Não',
+        okLabel: 'Sim',
+        title: 'Atualização',
+        type: 'info',
+      },
+    )
+
+    if (!acceptUpdate) {
+      return
+    }
+
+    await installUpdate()
+  })
+
   return (
     <div class="grid h-screen w-screen grid-cols-[minmax(40ch,_1fr)_3fr] gap-2 overflow-hidden">
       <section class="flex h-full flex-col gap-4 overflow-auto bg-neutral-200 p-4 dark:bg-neutral-900">
